@@ -22,7 +22,7 @@ export default function AuthWrapper({
         left="0"
       >
         <Flex
-          w="30%"
+          w={{ lg: "30%", md: "40%", base: "90%" }}
           bg="#fff"
           borderRadius={10}
           align="center"

@@ -17,9 +17,9 @@ export default function CustomInput({
   icon,
 }: {
   type?: string;
-  value: string;
+  value?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder: string;
+  placeholder?: string;
   readOnly?: boolean;
   label?: string;
   icon?: ReactElement;

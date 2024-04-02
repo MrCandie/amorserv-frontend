@@ -2,7 +2,7 @@ import { Flex } from "@chakra-ui/react";
 import SelectComponent from "../reusables/Select";
 import { useState } from "react";
 
-export default function Filter() {
+export default function Filter({ categories }: { categories: Array<string> }) {
   const [formData, setFormData] = useState({
     category: "",
     author: "",
@@ -16,21 +16,23 @@ export default function Filter() {
             setFormData({ ...formData, category: e.target.value })
           }
           value={formData.category}
-          options={["rpmance"]}
+          options={categories || []}
           placeholder="Category"
         />
       </Flex>
 
-      <Flex>
-        <SelectComponent
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-            setFormData({ ...formData, author: e.target.value })
-          }
-          value={formData.author}
-          options={["rpmance"]}
-          placeholder="Author"
-        />
-      </Flex>
+      {false && (
+        <Flex>
+          <SelectComponent
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              setFormData({ ...formData, author: e.target.value })
+            }
+            value={formData.author}
+            options={["rpmance"]}
+            placeholder="Author"
+          />
+        </Flex>
+      )}
 
       <Flex>
         <SelectComponent

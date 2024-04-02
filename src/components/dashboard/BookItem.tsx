@@ -1,8 +1,9 @@
 import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import ImageComponent from "../reusables/Image";
 import { MdFileDownload } from "react-icons/md";
+import { IBook } from "../../constants/interface";
 
-export default function BookItem() {
+export default function BookItem({ book }: { book: IBook }) {
   return (
     <Flex
       w={{ lg: "17%", md: "45%", base: "47%" }}
@@ -15,8 +16,11 @@ export default function BookItem() {
       border="1px solid #eee"
       bg="#fff"
     >
-      <Box w="100%">
-        <ImageComponent src="/cover.jpeg" height="250px" alt="book" />
+      <Box w="100%" display={{ lg: "block", md: "none", base: "none" }}>
+        <ImageComponent src={book?.cover_url} height="200px" alt="book" />
+      </Box>
+      <Box w="100%" display={{ lg: "none", md: "block", base: "block" }}>
+        <ImageComponent src={book?.cover_url} height="150px" alt="book" />
       </Box>
       <Flex w="100%" align="center" justify="space-between">
         <Flex align="start" direction="column" gap="0.5rem">
@@ -26,7 +30,14 @@ export default function BookItem() {
             fontWeight="medium"
             textTransform="capitalize"
           >
-            the alchemist
+            {book?.name
+              ? book?.name
+                  ?.slice(0, 20)
+                  .padEnd(
+                    book?.name?.length > 20 ? 22 : book?.name?.length,
+                    "."
+                  )
+              : ""}
           </Heading>
           <Text
             fontSize={{ lg: 16, md: 16, base: 15 }}
@@ -34,12 +45,14 @@ export default function BookItem() {
             fontWeight="bold"
             textTransform="capitalize"
           >
-            mr candie
+            {book?.author}
           </Text>
         </Flex>
-        <Button size="sm" bg="brand.100" color="#fff">
-          <MdFileDownload />
-        </Button>
+        <a href={book?.url} target="_blank" download={book.name}>
+          <Button size="sm" bg="brand.100" color="#fff">
+            <MdFileDownload />
+          </Button>
+        </a>
       </Flex>
     </Flex>
   );
