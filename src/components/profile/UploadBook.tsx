@@ -5,21 +5,33 @@ import CustomInput from "../reusables/CustomInput";
 import { useEffect, useState } from "react";
 import SelectComponent from "../reusables/Select";
 import { Preview } from "mrcandie-react-preview";
-import { createBook, listCategories, uploadFile } from "../../util/http";
+import {
+  createBook,
+  deleteBook,
+  editBook,
+  listCategories,
+  listMyBooks,
+  uploadFile,
+} from "../../util/http";
 import { ICategory } from "../../constants/interface";
 
 export default function UploadBook({
   isOpen,
   onClose,
   type = "create",
+  data,
+  setList,
 }: {
   isOpen: boolean;
   onClose: () => void;
   type?: string;
+  data?: any;
+  setList?: any;
 }) {
   const [book, setBook] = useState("");
   const [cover, setCover] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
   const [categories, setCategories] = useState([]);
   const toast = useToast();
   const [disabled, setDisabled] = useState(false);
@@ -77,13 +89,14 @@ export default function UploadBook({
         cover_url: coverData.data.url,
         url: bookData.data.url,
       });
-      console.log(formData);
-      const res = await createBook({
+
+      await createBook({
         ...formData,
         url: bookData.data.url,
         cover_url: coverData.data.url,
       });
-      console.log(res);
+      const res = await listMyBooks();
+      setList(res?.data);
       toast({
         title: `Upload successful`,
         description: ``,
@@ -114,40 +127,125 @@ export default function UploadBook({
     setLoading(false);
   }
 
+  useEffect(() => {
+    if (type === "edit") {
+      setFormData({
+        name: data.name,
+        author: data.author,
+        category: data.category,
+        cover_url: "",
+        url: "",
+      });
+    }
+  }, [data, type]);
+
+  async function editHandler() {
+    try {
+      setLoading(true);
+
+      await editBook(
+        {
+          name: formData.name,
+          author: formData.author,
+          category: formData.category,
+        },
+        data?.id
+      );
+      const res = await listMyBooks();
+
+      setList(res?.data);
+      toast({
+        title: `Update successful`,
+        description: ``,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+      onClose();
+    } catch (error: any) {
+      toast({
+        title: `${error?.response?.data.message || "something went wrong"}`,
+        description: ``,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+
+    setLoading(false);
+  }
+
+  async function deleteHandler() {
+    try {
+      setLoading1(true);
+
+      await deleteBook(data?.id);
+      const res = await listMyBooks();
+
+      setList(res?.data);
+      toast({
+        title: `Successful`,
+        description: ``,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+      onClose();
+    } catch (error: any) {
+      toast({
+        title: `${error?.response?.data.message || "something went wrong"}`,
+        description: ``,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+
+    setLoading1(false);
+  }
+
   return (
     <ReusableModal isOpen={isOpen} onClose={onClose} title="Upload a book">
       <Flex w="100%" align="start" direction="column" gap="1rem">
-        <label
-          htmlFor="file"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            flexDirection: "column",
-            gap: "1rem",
-            padding: "1rem",
-            border: "1px solid #ccc",
-            borderRadius: 10,
-            cursor: "pointer",
-            fontWeight: "medium",
-          }}
-        >
-          <Input
-            onChange={(e: any) => setCover(e.target.files[0])}
-            display="none"
-            id="file"
-            type="file"
-          />
-          <MdCloudUpload size={50} color="#333" />
-          Upload book cover (jpg, jpeg, png, svg)
-        </label>
-        {cover && <Preview file={cover} />}
-        <CustomInput
-          onChange={(e: any) => setBook(e.target.files[0])}
-          label="Upload Book"
-          type="file"
-        />
+        {type !== "edit" && (
+          <>
+            <label
+              htmlFor="file"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                flexDirection: "column",
+                gap: "1rem",
+                padding: "1rem",
+                border: "1px solid #ccc",
+                borderRadius: 10,
+                cursor: "pointer",
+                fontWeight: "medium",
+              }}
+            >
+              <Input
+                onChange={(e: any) => setCover(e.target.files[0])}
+                display="none"
+                id="file"
+                type="file"
+              />
+              <MdCloudUpload size={50} color="#333" />
+              Upload book cover (jpg, jpeg, png, svg)
+            </label>
+            {cover && <Preview file={cover} />}
+            <CustomInput
+              onChange={(e: any) => setBook(e.target.files[0])}
+              label="Upload Book"
+              type="file"
+            />
+          </>
+        )}
         <CustomInput
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setFormData({ ...formData, name: e.target.value })
@@ -175,19 +273,32 @@ export default function UploadBook({
         />
         <Flex w="100%" align="center" gap="1rem">
           {type === "edit" && (
-            <Button w="100%" colorScheme="red" size="md">
+            <Button
+              onClick={deleteHandler}
+              isLoading={loading1}
+              loadingText=""
+              w="100%"
+              colorScheme="red"
+              size="md"
+            >
               Delete
             </Button>
           )}
           <Button
-            onClick={uploadHandler}
+            onClick={() => {
+              if (type === "edit") {
+                editHandler();
+              } else {
+                uploadHandler();
+              }
+            }}
             isLoading={loading}
             loadingText=""
             w="100%"
             bg="brand.100"
             color="#fff"
             size="md"
-            isDisabled={disabled}
+            isDisabled={type !== "edit" ? disabled : false}
           >
             {type === "create" ? "Create" : "Save"}
           </Button>

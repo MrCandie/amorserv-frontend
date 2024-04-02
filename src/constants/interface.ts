@@ -2,11 +2,12 @@ export interface IBook {
   name: string;
   user?: string;
   userId?: string;
-  category?: string;
+  category?: any;
   url: string;
   cover_url: string;
   author: string;
   id: string;
+  status: string;
   createdAt?: string;
   updatedAt?: string;
 }

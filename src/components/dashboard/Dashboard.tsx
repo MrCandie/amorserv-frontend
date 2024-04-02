@@ -2,15 +2,17 @@ import { Flex, Heading, Text } from "@chakra-ui/react";
 import Wrapper from "../reusables/Wrapper";
 import SubHeader from "./SubHeader";
 import BookList from "./BookList";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { listBooks } from "../../util/http";
 import Loader from "../reusables/Loader";
 import ReusableSkeleton from "../reusables/ReusableSkeleton";
+import { AuthContext } from "../../util/context";
 
 export default function Dashboard() {
   const [list, setList] = useState([]);
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     async function fetchData() {
@@ -45,7 +47,7 @@ export default function Dashboard() {
               fontWeight="medium"
               textTransform="capitalize"
             >
-              Hello candie
+              Hello {user.name}
             </Heading>
             <Text
               fontSize={{ lg: 18, md: 18, base: 16 }}

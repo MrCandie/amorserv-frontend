@@ -9,12 +9,25 @@ import {
 } from "@chakra-ui/react";
 import { FaEye } from "react-icons/fa";
 import UploadBook from "../UploadBook";
+import { IBook } from "../../../constants/interface";
 
-export default function SingleBook() {
+export default function SingleBook({
+  book,
+  setList,
+}: {
+  book: IBook;
+  setList?: (e: Array<IBook>) => void;
+}) {
   const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <>
-      <UploadBook isOpen={isOpen} onClose={onClose} type="edit" />
+      <UploadBook
+        setList={setList}
+        data={book}
+        isOpen={isOpen}
+        onClose={onClose}
+        type="edit"
+      />
       <Flex
         w="100%"
         align="center"
@@ -23,7 +36,7 @@ export default function SingleBook() {
         py="0.3rem"
       >
         <Flex w="50%" align="center" gap="1rem">
-          <Avatar name="mr candie" src="/cover.jpeg" size="md" />
+          <Avatar name="mr candie" src={book?.cover_url} size="md" />
           <Flex align="start" direction="column" gap="0.5rem">
             <Heading
               fontSize={{ lg: 16, md: 15, base: 14 }}
@@ -31,7 +44,7 @@ export default function SingleBook() {
               fontWeight="medium"
               textTransform="capitalize"
             >
-              the alchemist
+              {book?.name}
             </Heading>
             <Text
               fontSize={{ lg: 16, md: 16, base: 15 }}
@@ -39,13 +52,13 @@ export default function SingleBook() {
               fontWeight="bold"
               textTransform="capitalize"
             >
-              mr candie
+              {book?.author}
             </Text>
           </Flex>
         </Flex>
         <Flex w="50%" align="center" justify="space-around">
           <Tag fontSize={{ lg: 15, md: 15, base: 12 }} colorScheme="green">
-            SUCCESS
+            {book?.status?.toUpperCase()}
           </Tag>
           <Button onClick={onOpen} size="xs">
             <FaEye />

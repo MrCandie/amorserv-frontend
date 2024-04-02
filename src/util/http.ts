@@ -76,3 +76,46 @@ export async function createBook(data: {
 
   return response.data;
 }
+
+export async function listMyBooks() {
+  const TOKEN = getStoredItem("token");
+  const response = await axios.get(`${API_URL}/book/me`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${TOKEN}`,
+    },
+  });
+
+  return response.data;
+}
+
+export async function editBook(
+  data: {
+    name: string;
+    author: string;
+    category: string;
+  },
+  id: string
+) {
+  const TOKEN = getStoredItem("token");
+  const response = await axios.patch(`${API_URL}/book/${id}`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${TOKEN}`,
+    },
+  });
+
+  return response.data;
+}
+
+export async function deleteBook(id: string) {
+  const TOKEN = getStoredItem("token");
+  const response = await axios.delete(`${API_URL}/book/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${TOKEN}`,
+    },
+  });
+
+  return response.data;
+}

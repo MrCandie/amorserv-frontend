@@ -2,10 +2,13 @@ import { Avatar, Button, Flex, Heading, useDisclosure } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineMenu } from "react-icons/ai";
 import MobileMenu from "./MobileMenu";
+import { useContext } from "react";
+import { AuthContext } from "../../util/context";
 
 export default function Header({ title }: { title: string }) {
   const navigate = useNavigate();
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const ctx = useContext(AuthContext);
   return (
     <>
       <MobileMenu isOpen={isOpen} onClose={onClose} />
@@ -38,7 +41,7 @@ export default function Header({ title }: { title: string }) {
           cursor="pointer"
           onClick={() => navigate("/profile")}
           size="sm"
-          name="mr cabdie"
+          name={ctx?.user?.name}
         />
       </Flex>
     </>
