@@ -96,11 +96,13 @@ export default function Login() {
           }
           value={formData.password}
         />
-        <Flex w="100%" align="end" justify="end">
-          <Link style={{ textDecoration: "underline" }} to="/forgot-password">
-            Forgot Password?
-          </Link>
-        </Flex>
+        {false && (
+          <Flex w="100%" align="end" justify="end">
+            <Link style={{ textDecoration: "underline" }} to="/forgot-password">
+              Forgot Password?
+            </Link>
+          </Flex>
+        )}
         <Button
           loadingText=""
           isLoading={loading}

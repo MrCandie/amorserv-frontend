@@ -12,7 +12,7 @@ import Upload from "./Upload";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../util/context";
 import { useNavigate } from "react-router-dom";
-import { listMyBooks } from "../../util/http";
+import { listMyBooks, viewProfile } from "../../util/http";
 import Loader from "../reusables/Loader";
 import { IBook } from "../../constants/interface";
 
@@ -21,13 +21,12 @@ export default function Profile() {
   const navigate = useNavigate();
   const [list, setList] = useState<Array<IBook>>([]);
   const [progress, setProgress] = useState(0);
+  const [user, setUser] = useState("");
   // const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        // setLoading(true);
-        // setLoading(true);
         setProgress(20);
         setProgress(40);
         setProgress(60);
@@ -38,7 +37,23 @@ export default function Profile() {
       }
       setProgress(80);
       setProgress(100);
-      // setLoading(false);
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setProgress(20);
+        setProgress(40);
+        setProgress(60);
+        const res = await viewProfile();
+        setUser(res?.data);
+      } catch (error) {
+        console.log(error);
+      }
+      setProgress(80);
+      setProgress(100);
     }
     fetchData();
   }, []);
@@ -61,7 +76,7 @@ export default function Profile() {
 
             <TabPanels>
               <TabPanel>
-                <UserDetails />
+                <UserDetails user={user} />
               </TabPanel>
               <TabPanel>
                 <Upload setList={setList} list={list} />

@@ -119,3 +119,46 @@ export async function deleteBook(id: string) {
 
   return response.data;
 }
+
+export async function getQuotes() {
+  const response = await axios.get(
+    `https://api.api-ninjas.com/v1/quotes?category=inspirational`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "X-Api-Key": "DsWmbMIIVjRAcuc973nZYw==A0VbABSP7XatBeR5",
+      },
+    }
+  );
+
+  return response.data;
+}
+
+export async function viewProfile() {
+  const TOKEN = getStoredItem("token");
+  const response = await axios.get(`${API_URL}/auth/me`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${TOKEN}`,
+    },
+  });
+
+  return response.data;
+}
+
+export async function editProfile(data: {
+  name?: string;
+  website?: string;
+  twitter?: string;
+  linkedin?: string;
+}) {
+  const TOKEN = getStoredItem("token");
+  const response = await axios.patch(`${API_URL}/auth/me`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${TOKEN}`,
+    },
+  });
+
+  return response.data;
+}

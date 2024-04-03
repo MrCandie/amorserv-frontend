@@ -14,6 +14,7 @@ export default function Search() {
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     async function fetchData() {
@@ -23,7 +24,14 @@ export default function Search() {
         setProgress(40);
         setProgress(60);
         const res = await listBooks();
-        setList(res?.data);
+        if (filter === "all") {
+          setList(res?.data);
+        } else {
+          const filtered = res?.data?.filter(
+            (el: IBook) => el.category.toLowerCase() === filter.toLowerCase()
+          );
+          setList(filtered);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -32,7 +40,7 @@ export default function Search() {
       setLoading(false);
     }
     fetchData();
-  }, []);
+  }, [filter]);
 
   useEffect(() => {
     async function fetchData() {
@@ -83,8 +91,9 @@ export default function Search() {
           setValue={setValue}
           placeholder="Search Books, author, title"
           onClick={searchHandler}
+          loading={loading}
         />
-        <Filter categories={categories} />
+        <Filter categories={categories} setFilter={setFilter} filter={filter} />
         {loading ? <ReusableSkeleton /> : <BookList list={list} />}
       </Wrapper>
     </>

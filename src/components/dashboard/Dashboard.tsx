@@ -39,7 +39,7 @@ export default function Dashboard() {
       <Loader progress={progress} setProgress={setProgress} />
       <Wrapper title="Home">
         <Flex w="100%" align="start" direction="column" gap="1rem">
-          <SubHeader />
+          <SubHeader list={list?.slice(0, 5)} />
           <Flex w="100%" align="start" direction="column" gap="1rem">
             <Heading
               fontSize={{ lg: 16, md: 15, base: 14 }}

@@ -1,6 +1,32 @@
 import { Flex, Heading, Text } from "@chakra-ui/react";
+import BookItem from "./BookItem";
+import { IBook } from "../../constants/interface";
+import { useEffect, useState } from "react";
+import { getQuotes } from "../../util/http";
 
-export default function SubHeader() {
+interface IQuote {
+  author: string;
+  quote: string;
+  category?: string;
+}
+
+export default function SubHeader({ list }: { list: Array<IBook> }) {
+  const [quote, setQuote] = useState<IQuote>({
+    author: "",
+    quote: "",
+    category: "",
+  });
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await getQuotes();
+        setQuote(res[0]);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, []);
   return (
     <Flex w="100%" align="center" gap="1rem">
       <Flex
@@ -13,6 +39,7 @@ export default function SubHeader() {
         gap="1rem"
         p="1rem"
         justify="center"
+        overflow="scroll"
       >
         <Heading
           fontSize={{ lg: 18, md: 17, base: 16 }}
@@ -28,8 +55,7 @@ export default function SubHeader() {
           fontWeight="normal"
           textTransform="capitalize"
         >
-          when you truly want something, the universe conspires to help you
-          achieve it
+          {quote?.quote}
         </Text>
         <Flex w="100%" align="end" justify="end">
           <Heading
@@ -38,7 +64,7 @@ export default function SubHeader() {
             fontWeight="bold"
             textTransform="capitalize"
           >
-            the alchemist
+            {quote?.author}
           </Heading>
         </Flex>
       </Flex>
@@ -49,7 +75,14 @@ export default function SubHeader() {
         h="200px"
         borderRadius={16}
         display={{ lg: "flex", md: "none", base: "none" }}
-      ></Flex>
+        align="center"
+        gap="1rem"
+        justify="center"
+      >
+        {list?.map((book, i) => (
+          <BookItem book={book} key={i} show={false} height="130px" />
+        ))}
+      </Flex>
     </Flex>
   );
 }
